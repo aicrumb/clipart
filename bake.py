@@ -12,8 +12,8 @@ wandb.init(project="guide-optimization")
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 stages = 10
-resolution = (64,64)
-steps = int(250/stages)
+resolution = (128,128)
+steps = int(200/stages)
 clip_model = clip.load("ViT-B/32",jit=False)[0].to(device)
 
 timeout = 0.015  # sleep a little, dont run everything so fast, my computer will overheat doing this for extended time
@@ -26,12 +26,11 @@ z = torch.randn((1,3,resolution[0],resolution[1]), requires_grad=True, device=de
 _, norm = render_norm(prompt, z)
 del render_norm
 
-
 fix = transforms.Resize(224)
 guides = [torch.randn((512), device=device) for i in range(stages)]
 for i in range(len(guides)):
     guides[i].requires_grad = True
-guide_opt = optim.Adam(guides, 0.1)
+guide_opt = optim.AdamW(guides, 0.12)
 
 steps = 100
 for step in trange(steps):
@@ -39,6 +38,11 @@ for step in trange(steps):
     loss = 0
     for i in range(len(guides)):
         z, pz = render(guides[i], z)
+
+        # a loss to push it in the right semantic direction, but it's magnitude decays over time so
+        # that in the early bit it doesnt have to focus on pushin it in the right direction
+        # on it's own, but in the late bit it can focus on the things that are more important than
+        # being globally semantically close
         loss+=(sph_dist(guides[i], prompt)/(len(guides)))*(1-step/steps)*(1-i/len(guides))
     z_emb = clip_model.encode_image(fix(z))
     loss += sph_dist(z_emb, prompt)
@@ -47,10 +51,16 @@ for step in trange(steps):
     loss.backward(retain_graph=True) 
     guide_opt.step()
 
-    # idk why the image isnt updating
+    # idk why the image isnt updating so lets save and reopen it ??? that's gotta be a big time waster
+    # but honestly it's the one thing that's fixed it so far
+
     pz.save("output.png")
     pz = Image.open("output.png")
-    wandb.log({"loss": loss.item(), "output": [wandb.Image(pz, caption=prompt_o+" (ex)"), wandb.Image(norm, caption=prompt_o+" (og)")]})
+    wandb.log({"loss": loss.item(), 
+               "output": [
+                            wandb.Image(pz, caption=prompt_o+" (ex)"), 
+                            wandb.Image(norm, caption=prompt_o+" (og)")
+                          ]})
 
 name=prompt_o.replace(" ", "_")
 torch.save(torch.stack(guides), f"baked/{name}.pt")
