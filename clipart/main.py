@@ -27,8 +27,8 @@ class CLIPart(t.nn.Module):
         z.requires_grad_(True)
         # assert z.shape[-1]==z.shape[-2], "z should be square"
 
-        o=t.optim.Adam((z,),self.lr)
-        make_cutouts = MakeCutouts(self.clip_model.visual.input_resolution, 8)
+        o=t.optim.AdamW((z,),self.lr)
+        make_cutouts = MakeCutouts(self.clip_model.visual.input_resolution, self.cutn)
 
         if self.penalize_graffiti:
             te = prompt
@@ -37,15 +37,17 @@ class CLIPart(t.nn.Module):
         else:
             te = prompt
         te = te.to(self.device)
+
         if self.verbose:
             range_n = tqdm(range(self.steps))
         else:
             range_n = range(self.steps)
+
         for i in range_n:
             l = sph_dist(self.clip_model.encode_image(make_cutouts(z)), te.unsqueeze(0))
-            l = l +  (z - z.clamp(-1, 1)).pow(2).mean()/2
+            l = l + (z - z.clamp(-1, 1)).pow(2).mean()
             l = l + (tv_loss(z).mean()*1.4) 
-            l = l + F.mse_loss(z.std(),t.ones(1,device=self.device)*.4)*.13 
+            l = l + (z.std()-1).pow(2).mean()*.05
             o.zero_grad()
             l.backward(retain_graph=True)
             o.step()

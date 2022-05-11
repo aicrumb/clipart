@@ -30,10 +30,7 @@ class MakeCutouts(nn.Module):
             tvt.Lambda(lambda x: x + torch.randn_like(x) * 0.02),
             tvt.RandomAffine(degrees=15, translate=(0.1, 0.1)),
             tvt.Lambda(lambda x: x + torch.randn_like(x) * 0.01),
-            # tvt.RandomPerspective(distortion_scale=0.4, p=0.7),
-            tvt.Lambda(lambda x: x + torch.randn_like(x) * 0.01),
             tvt.RandomGrayscale(p=0.5),
-            tvt.Lambda(lambda x: x + torch.randn_like(x) * 0.02),
         ]
         self.augs = tvt.Compose(custom_augs)
         self.resize = RandResize(224, .5)

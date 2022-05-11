@@ -31,7 +31,7 @@ fix = transforms.Resize(224)
 guides = [torch.randn((512), device=device) for i in range(stages)]
 for i in range(len(guides)):
     guides[i].requires_grad = True
-guide_opt = optim.Adam(guides, 0.01)
+guide_opt = optim.Adam(guides, 0.1)
 
 steps = 100
 for step in trange(steps):
