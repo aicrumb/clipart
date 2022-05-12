@@ -12,6 +12,8 @@ embedding = clip_model.encode_text(clip.tokenize(prompt).to(device))
 paths = os.listdir("baked")
 names = [path.replace("_", " ").replace(".pt", "") for path in paths]
 embeddings = [clip_model.encode_text(clip.tokenize(name).to(device)) for name in names]
+
+# just use closest one for now, soon i'll make it sorta randomly choose from the top five or something
 dists = [sph_dist(embedding, i).item() for i in embeddings]
 best_ind = dists.index(min(dists))
 path = torch.load("baked/"+paths[best_ind])
