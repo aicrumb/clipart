@@ -47,13 +47,14 @@ python normal.py "a bag of doritos"
 </table>
 <p>Results for microwaving a prompt that hasn't been seen before, the paths were automatically determined by spherical distance to the original prompt. Reminder that this technique is not what was originally intended, and the focus is mainly on baking and microwaving the same prompts. Also that this is NOT based on the best RGB scripts for higher resolutions, as this was an old personal script I had on hand for generating just pixel art for a discord bot.</p>
 <p>(microwaving at half size, full size, then double size)</p>
+<p>for microwaving, we take the prompt (70%) and add it to the baked prompts (30%)</p>
 <table>
 <thead>
 <tr>
 <th>microwaving new prompt 64x64</th>
-<th>mean top two paths (30%) + prompt (70%)</th>
-<th>top 2 spliced randomly (30%) + prompt (70%)</th>
-<th>normal clip optimization(control)</th>
+<th>mean top two paths</th>
+<th>top 2 spliced randomly</th>
+<th>normal clip optimization(control), </th>
 <th>paths used</th>
 </tr>
 </thead>
@@ -86,8 +87,8 @@ python normal.py "a bag of doritos"
 <thead>
 <tr>
 <th>microwaving new prompt 128x128</th>
-<th>mean top two paths (30%) + prompt (70%)</th>
-<th>top 2 spliced randomly (30%) + prompt (70%)</th>
+<th>mean top two paths </th>
+<th>top 2 spliced randomly</th>
 <th>normal clip optimization(control)</th>
 </tr>
 </thead>
