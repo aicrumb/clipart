@@ -84,7 +84,6 @@ an_old_photograph_of_a_dog_made_of_twigs.pt
 an_old_photograph_of_a_giraffe_in_a_swimming_pool.pt
 a_body_of_water.pt
 a_dinosaur_eating_waffles.pt
-a_dog_sitting_on_a_hilla_dictionary_on_a_wooden_table.pt
 a_fluffy_animal.pt
 a_forest_where_the_trees_are_candy.pt
 a_lemon.pt
