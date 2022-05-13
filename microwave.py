@@ -16,7 +16,7 @@ clip_model = clip.load("ViT-B/32", jit=False)[0].to(device)
 render = CLIPart(steps=steps, clip_model=clip_model, device=device, lr=0.12)
 def lerp(x,y,t):
     return (1 - t) * x + t * y
-z = torch.randn((1,3,224,224), device=device, requires_grad=True)
+z = torch.randn((1,3,64,64), device=device, requires_grad=True)
 
 if prompt:
 	embedding = clip_model.encode_text(clip.tokenize(prompt).to(device))
