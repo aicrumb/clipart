@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html>
+<body>
 <div id="medium" class="medium"><h1 id="meta-optimization-of-clip-guided-rgb-tensors">Meta-Optimization of CLIP Guided RGB Tensors</h1>
 <h2 id="-abstract-"><strong>Abstract</strong></h2>
 <p>Using Adam and spherical distance as a loss, images can be iteratively created by optimizing an image tensor based on CLIP embeddings. We try optimizing the CLIP embeddings to guide towards in stages, and <em>bake</em> processes for generating from the same prompt in the future, as well as showing how the process can create more structurally cohesive images than guiding only towards the end target embedding. We also see the unexpected side-effect of getting rid of unfavorable patterns created in many CLIP optimization processes.</p>
@@ -182,3 +185,5 @@ the_sound_of_the_wind.pt
 <h4 id="notes">Notes</h4>
 <p>Eventually I will evaluate these results with a pyramid based CLIP image generation technique, as I have one on hand that I wrote not too long ago and don't know why I didn't use it in the first place? It's even shown in a blog post that I wrote, also not too long ago. (<a href="https://medium.com/analytics-vidhya/clipdirect-5da430087ea">https://medium.com/analytics-vidhya/clipdirect-5da430087ea</a>)</p>
 </div>
+</body>
+</html>
