@@ -13,7 +13,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 stages = 10
 resolution = (128,128)
-steps = int(200/stages)
+steps = int(300/stages)
 clip_model = clip.load("ViT-B/32",jit=False)[0].to(device)
 
 timeout = 0.01  # sleep a little, dont run everything so fast, my computer will overheat doing this for extended time
@@ -21,13 +21,15 @@ render = CLIPart(clip_model=clip_model, device=device, steps=steps, cutn=1, verb
 render_norm = CLIPart(clip_model=clip_model, device=device, steps=steps*stages, cutn=1, verbose=False, timeout=timeout)
 prompt_o = sys.argv[1]
 print(f"Baking {prompt_o}")
-fix = transforms.Resize(224)
+fix = transforms.Resize((224,224))
 if ".jpg" not in prompt_o and ".png" not in prompt_o:
     prompt = clip_model.encode_text(clip.tokenize(prompt_o).to(device))
+    prompt_type = 'txt'
 else:
-    prompt = clip_model.encode_image(fix(transforms.ToTensor()(Image.open(prompt_o).convert("RGB")).unsqueeze(0)).to(device))
+    base_image = fix(transforms.ToTensor()(Image.open(prompt_o).convert("RGB")).unsqueeze(0)).to(device)
+    prompt = clip_model.encode_image(base_image)
     prompt_o = prompt_o.split("/")[-1].replace("_", " ").replace(".jpg", "").replace(".png", "")
-    
+    prompt_type = 'img'
 
 z = torch.randn((1,3,resolution[0],resolution[1]), requires_grad=True, device=device)
 _, norm = render_norm(prompt, z)
@@ -52,6 +54,11 @@ for step in trange(steps):
         loss+=(sph_dist(guides[i], prompt)/(len(guides)))*(1-step/steps)*(1-i/len(guides))
     z_emb = clip_model.encode_image(fix(z))
     loss += sph_dist(z_emb, prompt)
+    if prompt_type=='img':
+        print(base_image.shape)
+        print(fix(z).shape)
+        loss += (fix(z)-fix(base_image)).pow(2).mean()
+
 
     guide_opt.zero_grad()
     loss.backward(retain_graph=True) 
