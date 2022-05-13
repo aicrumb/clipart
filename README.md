@@ -1,5 +1,7 @@
 # Meta-Optimization of CLIP Guided RGB Tensors
 
+(requires pytorch, torchvision, and clip, clip can be installed with just `pip install git+https://github.com/openai/CLIP`)
+
 ## **Abstract**
 
 Using Adam and spherical distance as a loss, images can be iteratively created by optimizing an image tensor based on CLIP embeddings. We try optimizing the CLIP embeddings to guide towards in stages, and *bake* processes for generating from the same prompt in the future, as well as showing how the process can create more structurally cohesive images than guiding only towards the end target embedding. We also see the unexpected side-effect of getting rid of unfavorable patterns created in many CLIP optimization processes.
