@@ -55,8 +55,6 @@ for step in trange(steps):
     z_emb = clip_model.encode_image(fix(z))
     loss += sph_dist(z_emb, prompt)
     if prompt_type=='img':
-        print(base_image.shape)
-        print(fix(z).shape)
         loss += (fix(z)-fix(base_image)).pow(2).mean()
 
 
